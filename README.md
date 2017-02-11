@@ -1,61 +1,18 @@
-# Jenkins Job DSL Gradle Example 
+---
+maintainer: buep
+---
 
-An example [Job DSL](https://github.com/jenkinsci/job-dsl-plugin) project that uses Gradle for building and testing. Check out [this presentation](https://www.youtube.com/watch?v=SSK_JaBacE0) for a walkthrough of this example (starts around 14:00). 
+# Jenkins Job and pipeline project examples
 
-## File structure
+This is a continuation of [Sheehan's Job DSL gradle example](https://github.com/sheehan/job-dsl-gradle-example) project, which enables you to test your Jenkins Job DSL using a gradle project.
 
-    .
-    ├── jobs                    # DSL script files
-    ├── resources               # resources for DSL scripts
-    ├── src
-    │   ├── main
-    │   │   ├── groovy          # support classes
-    │   │   └── resources
-    │   │       └── idea.gdsl   # IDE support for IDEA
-    │   └── test
-    │       └── groovy          # specs
-    └── build.gradle            # build file
+## Roadmap
 
-# Script Examples
+The plan is to extend this work with also Jenkins pipeline examples, as well as make it possible to use an custom structure.
 
-* [Example 1](jobs/example1Jobs.groovy) - shows basic folder/job creation
-* [Example 2](jobs/example2Jobs.groovy) - shows how to create a set of jobs for each github branch, each in its own folder
-* [Example 3](jobs/example3Jobs.groovy) - shows how to use the configure block
-* [Example 4](jobs/example4Jobs.groovy) - shows a way to reuse job definitions for jobs that differ only with a few properties
-* [Example 5](jobs/example5Jobs.groovy) - shows how to pull out common components into static methods
-* [Example 6](jobs/example6Jobs.groovy) - shows how to include script resources from the workspace
-* [Example 7](jobs/example7Jobs.groovy) - shows how to create jobs using builders
-* [Example 8](jobs/example8Jobs.groovy) - shows how to use DSL extensions provided by other plugins
+Further we will explain how to nicely bind this setup with [JenkinsAsCode](https://github.com/Praqma/JenkinsAsCodeReference) using genesis and seedjobs.
 
-## Testing
+# Credits
 
-`./gradlew test` runs the specs.
+This project is directly based on [Sheehan's Job DSL gradle example](https://github.com/sheehan/job-dsl-gradle-example) and based on a clone of the repo at commit [15acca0425449deb378f4ed261ff643a32b40fcc](https://github.com/sheehan/job-dsl-gradle-example/commit/15acca0425449deb378f4ed261ff643a32b40fcc).
 
-[JobScriptsSpec](src/test/groovy/com/dslexample/JobScriptsSpec.groovy) 
-will loop through all DSL files and make sure they don't throw any exceptions when processed. All XML output files are written to `build/debug-xml`. 
-This can be useful if you want to inspect the generated XML before check-in.
-
-## Seed Job
-
-You can create the example seed job via the Rest API Runner (see below) using the pattern `jobs/seed.groovy`.
-
-Or manually create a job with the same structure:
-
-* Invoke Gradle script → Use Gradle Wrapper: `true`
-* Invoke Gradle script → Tasks: `clean test`
-* Process Job DSLs → DSL Scripts: `jobs/**/*Jobs.groovy`
-* Process Job DSLs → Additional classpath: `src/main/groovy`
-* Publish JUnit test result report → Test report XMLs: `build/test-results/**/*.xml`
-
-## REST API Runner
-
-A gradle task is configured that can be used to create/update jobs via the Jenkins REST API, if desired. Normally
-a seed job is used to keep jobs in sync with the DSL, but this runner might be useful if you'd rather process the
-DSL outside of the Jenkins environment or if you want to create the seed job from a DSL script.
-
-```./gradlew rest -Dpattern=<pattern> -DbaseUrl=<baseUrl> [-Dusername=<username>] [-Dpassword=<password>]```
-
-* `pattern` - ant-style path pattern of files to include
-* `baseUrl` - base URL of Jenkins server
-* `username` - Jenkins username, if secured
-* `password` - Jenkins password or token, if secured
